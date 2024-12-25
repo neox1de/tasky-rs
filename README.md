@@ -60,4 +60,4 @@ If you encounter any problems while using tasky-rs, please create an issue on th
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the [GNU General Public License v2.0](LICENSE).
