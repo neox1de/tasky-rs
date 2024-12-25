@@ -31,9 +31,9 @@ After instlaling with `cargo install` command, if you have add `~/.cargo/bin` to
 ```bash
 tasky-rs
 ```
-otherwise, use:
+otherwise, add .cargo/bin to your path:
 ```bash
-cargo tasky-rs
+export PATH=~/.cargo/bin:$PATH
 ```
 if you have build the project from source, navigate to `target/release`:
 ```bash
