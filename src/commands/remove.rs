@@ -1,9 +1,8 @@
-use std::fs::{OpenOptions, File};
-use std::io::{Read, Write};
-use serde_json;
-use serde::{Serialize, Deserialize};
-
 use dirs;
+use serde::{Deserialize, Serialize};
+use serde_json;
+use std::fs::{File, OpenOptions};
+use std::io::{Read, Write};
 
 #[derive(Serialize, Deserialize)]
 struct Task {
@@ -11,6 +10,8 @@ struct Task {
     title: String,
     description: String,
     status: String,
+    #[serde(default)]
+    categories: Vec<String>,
 }
 
 pub fn execute(id: &str) {
@@ -31,21 +32,22 @@ pub fn execute(id: &str) {
     };
 
     let id: u32 = id.parse().expect("Invalid ID format");
-    if let Some(task) = tasks.iter_mut().find(|task| task.id == id) {
+    if let Some(task) = tasks.iter_mut().find(|t| t.id == id) {
+        // Mark the task as "Deleted"
         task.status = "Deleted".to_string();
+        let serialized_tasks =
+            serde_json::to_string_pretty(&tasks).expect("Unable to serialize tasks");
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(&path)
+            .expect("Unable to open file");
+        file.write_all(serialized_tasks.as_bytes())
+            .expect("Unable to write to file");
+
+        println!("Task with ID {} marked as deleted", id);
     } else {
         eprintln!("Task with ID {} not found", id);
-        return;
     }
-
-    let serialized_tasks = serde_json::to_string_pretty(&tasks).expect("Unable to serialize tasks");
-    let mut file = OpenOptions::new()
-        .write(true)
-        .create(true)
-        .truncate(true)
-        .open(&path)
-        .expect("Unable to open file");
-    file.write_all(serialized_tasks.as_bytes()).expect("Unable to write to file");
-
-    println!("Task with ID {} Deleted successfully", id);
 }
