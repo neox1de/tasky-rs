@@ -1,5 +1,6 @@
 mod commands;
 mod config;
+mod utils;
 
 use std::fs;
 
@@ -26,7 +27,12 @@ fn main() {
                 .get_one::<String>("STATUS")
                 .map(|s| s.as_str())
                 .unwrap_or("To-Do");
-            commands::add::execute(title, description, status);
+            let categories: Vec<String> = sub_m
+                .get_many::<String>("CATEGORIES")
+                .unwrap_or_default()
+                .map(|s| s.to_string())
+                .collect();
+            commands::add::execute(title, description, status, categories);
         }
         Some(("remove", sub_m)) => {
             let id = sub_m.get_one::<String>("ID").unwrap();
@@ -46,6 +52,11 @@ fn main() {
             let id = sub_m.get_one::<String>("ID").unwrap();
             let status = sub_m.get_one::<String>("STATUS").unwrap();
             commands::set::execute(id, status);
+        }
+        Some(("category", sub_m)) => {
+            let name = sub_m.get_one::<String>("NAME").unwrap();
+            let color = sub_m.get_one::<String>("COLOR").unwrap();
+            commands::category::execute(name, color);
         }
         None => {
             println!("Missing argument, use --help to get help.");

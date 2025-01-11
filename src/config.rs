@@ -1,4 +1,4 @@
-use clap::{Arg, Command};
+use clap::{Arg, Command, ArgAction};
 use dirs;
 use std::path::PathBuf;
 
@@ -35,6 +35,13 @@ pub fn build_app() -> Command {
                         .required(false)
                         .value_parser(["To-Do", "In-Progress", "Done", "Deferred", "Cancelled"])
                         .help("The status of the task (default: To-Do)"),
+                )
+                .arg(
+                    Arg::new("CATEGORIES")
+                        .long("categories")
+                        .required(false)
+                        .action(ArgAction::Append)
+                        .help("One or more categories for the task"),
                 ),
         )
         .subcommand(
@@ -55,13 +62,13 @@ pub fn build_app() -> Command {
                 .arg(
                     Arg::new("FIELD")
                         .required(true)
-                        .value_parser(["title", "description", "status"])
+                        .value_parser(["title", "description", "status", "categories"])
                         .help("The field to edit"),
                 )
                 .arg(
                     Arg::new("VALUE")
                         .required(true)
-                        .help("The new value for the field"),
+                        .help("New value / comma-separated list"),
                 ),
         )
         .subcommand(
@@ -82,6 +89,20 @@ pub fn build_app() -> Command {
                         .required(true)
                         .value_parser(["To-Do", "In-Progress", "Done", "Deferred", "Cancelled"])
                         .help("The status of the task"),
+                ),
+        )
+        .subcommand(
+            Command::new("category")
+                .about("Manage task categories")
+                .arg(
+                    Arg::new("NAME")
+                        .required(true)
+                        .help("Category name"),
+                )
+                .arg(
+                    Arg::new("COLOR")
+                        .required(true)
+                        .help("Color in hex format (e.g., #ff0000)"),
                 ),
         )
 }

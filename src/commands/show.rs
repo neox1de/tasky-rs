@@ -3,6 +3,7 @@ use std::io::Read;
 use serde_json;
 use serde::{Serialize, Deserialize};
 use colored::*;
+use crate::utils::hex_to_ansi_color;
 
 #[derive(Serialize, Deserialize)]
 struct Task {
@@ -10,6 +11,7 @@ struct Task {
     title: String,
     description: String,
     status: String,
+    categories: Vec<String>,
 }
 
 pub fn execute(id: &str) {
@@ -65,6 +67,19 @@ pub fn execute(id: &str) {
         println!("└{}┘", "─".repeat(box_width));
         println!();
         println!("{}: {} {}", "Status".bold(), "●".color(status_color), task.status.color(status_color));
+        
+        // Format categories with their colors
+        if !task.categories.is_empty() {
+            println!("{}:", "Categories".bold());
+            let colors = load_category_colors();
+            for cat in &task.categories {
+                if let Some(hex_color) = colors.get(cat) {
+                    println!("  • {}{}\x1b[0m", hex_to_ansi_color(hex_color), cat);
+                } else {
+                    println!("  • {}", cat);
+                }
+            }
+        }
     } else {
         eprintln!("Task with ID {} not found", id);
     }
@@ -93,4 +108,17 @@ fn wrap_text(text: &str, width: usize) -> Vec<String> {
     }
 
     lines
+}
+
+fn load_category_colors() -> std::collections::HashMap<String, String> {
+    let config_dir = dirs::config_dir().unwrap().join("tasky-rs");
+    let colors_file = config_dir.join("categories.json");
+    
+    if !colors_file.exists() {
+        return std::collections::HashMap::new();
+    }
+
+    let file = File::open(colors_file).expect("Unable to open categories file");
+    let reader = std::io::BufReader::new(file);
+    serde_json::from_reader(reader).unwrap_or_default()
 }

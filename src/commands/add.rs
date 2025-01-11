@@ -11,9 +11,10 @@ struct Task {
     title: String,
     description: String,
     status: String,
+    categories: Vec<String>,
 }
 
-pub fn execute(title: &str, description: &str, status: &str) {
+pub fn execute(title: &str, description: &str, status: &str, categories: Vec<String>) {
     // Validate status
     let valid_statuses = ["To-Do", "In-Progress", "Done", "Deferred", "Cancelled"];
     if !valid_statuses.contains(&status) {
@@ -42,14 +43,14 @@ pub fn execute(title: &str, description: &str, status: &str) {
         Vec::new()
     };
 
-    // Generate new ID based on the current number of tasks + 1
-    // Note: remove command does not remove the task, only marks them as "Deleted" to prevent failure in this section
-    let new_id = tasks.len() as u32 + 1;
+    let next_id = tasks.iter().map(|t| t.id).max().unwrap_or(0) + 1;
+
     let new_task = Task {
-        id: new_id,
+        id: next_id,
         title: title.to_string(),
         description: description.to_string(),
         status: status.to_string(),
+        categories,
     };
 
     tasks.push(new_task);
@@ -63,5 +64,5 @@ pub fn execute(title: &str, description: &str, status: &str) {
         .expect("Unable to open file");
     file.write_all(serialized_tasks.as_bytes()).expect("Unable to write to file");
 
-    println!("Task added successfully with ID: {}", new_id);
+    println!("Task added successfully");
 }

@@ -11,6 +11,7 @@ struct Task {
     title: String,
     description: String,
     status: String,
+    categories: Vec<String>,
 }
 
 pub fn execute(id: &str, field: &str, new_value: &str) {
@@ -50,6 +51,13 @@ pub fn execute(id: &str, field: &str, new_value: &str) {
             "title" => task.title = new_value.to_string(),
             "description" => task.description = new_value.to_string(),
             "status" => task.status = new_value.to_string(),
+            "categories" => {
+                // Split by commas for multiple categories
+                task.categories = new_value
+                    .split(',')
+                    .map(|s| s.trim().to_string())
+                    .collect();
+            }
             _ => {
                 eprintln!("Invalid field: {}", field);
                 return;
