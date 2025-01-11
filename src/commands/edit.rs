@@ -56,6 +56,7 @@ pub fn execute(id: &str, field: &str, new_value: &str) {
                 task.categories = new_value
                     .split(',')
                     .map(|s| s.trim().to_string())
+                    .filter(|s| !s.is_empty())
                     .collect();
             }
             _ => {

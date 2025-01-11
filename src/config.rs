@@ -1,4 +1,4 @@
-use clap::{Arg, Command, ArgAction};
+use clap::{Arg, Command};
 use dirs;
 use std::path::PathBuf;
 
@@ -40,8 +40,8 @@ pub fn build_app() -> Command {
                     Arg::new("CATEGORIES")
                         .long("categories")
                         .required(false)
-                        .action(ArgAction::Append)
-                        .help("One or more categories for the task"),
+                        .value_delimiter(',')
+                        .help("Comma-separated list of categories for the task"),
                 ),
         )
         .subcommand(
