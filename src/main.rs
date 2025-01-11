@@ -20,28 +20,28 @@ fn main() {
     match matches.subcommand() {
         Some(("list", _)) => commands::list::execute(),
         Some(("add", sub_m)) => {
-            let title = sub_m.value_of("TITLE").unwrap();
-            let description = sub_m.value_of("DESCRIPTION").unwrap();
-            let status = sub_m.value_of("STATUS").unwrap_or("To-Do");
+            let title = sub_m.get_one::<String>("TITLE").unwrap();
+            let description = sub_m.get_one::<String>("DESCRIPTION").unwrap();
+            let status = sub_m.get_one::<String>("STATUS").map(|s| s.as_str()).unwrap_or("To-Do");
             commands::add::execute(title, description, status);
         },
         Some(("remove", sub_m)) => {
-            let id = sub_m.value_of("ID").unwrap();
+            let id = sub_m.get_one::<String>("ID").unwrap();
             commands::remove::execute(id);
         },
         Some(("edit", sub_m)) => {
-            let id = sub_m.value_of("ID").unwrap();
-            let field = sub_m.value_of("FIELD").unwrap();
-            let value = sub_m.value_of("VALUE").unwrap();
+            let id = sub_m.get_one::<String>("ID").unwrap();
+            let field = sub_m.get_one::<String>("FIELD").unwrap();
+            let value = sub_m.get_one::<String>("VALUE").unwrap();
             commands::edit::execute(id, field, value);
         },
         Some(("show", sub_m)) => {
-            let id = sub_m.value_of("ID").unwrap();
+            let id = sub_m.get_one::<String>("ID").unwrap();
             commands::show::execute(id);
         },
         Some(("set", sub_m)) => {
-            let id = sub_m.value_of("ID").unwrap();
-            let status = sub_m.value_of("STATUS").unwrap();
+            let id = sub_m.get_one::<String>("ID").unwrap();
+            let status = sub_m.get_one::<String>("STATUS").unwrap();
             commands::set::execute(id, status);
         },
         None => {
