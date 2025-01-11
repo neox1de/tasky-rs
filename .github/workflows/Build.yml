@@ -75,5 +75,3 @@ jobs:
           token: ${{ secrets.TASKY_TOKEN }}
           tag: ${{ github.ref }}
           name: Release ${{ github.ref_name }}
-          body: |
-            Release notes for ${{ github.ref }}
