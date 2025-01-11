@@ -48,7 +48,7 @@ Contributions are welcome! Feel free to submit pull requests or create issues fo
 Future improvements planned for tasky-rs:
 
 - [ ] Add support for importing/exporting tasks
-- [ ] Implement task categories/labels
+- [x] Implement task categories/labels
 - [ ] Add due dates for tasks
 - [ ] Create task priority levels
 - [ ] Add recurring tasks support
