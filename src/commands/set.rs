@@ -11,6 +11,8 @@ struct Task {
     title: String,
     description: String,
     status: String,
+    #[serde(default)]
+    categories: Vec<String>,
 }
 
 pub fn execute(id: &str, status: &str) {
