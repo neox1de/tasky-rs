@@ -18,11 +18,11 @@ pub fn execute(id: &str) {
     let mut path = dirs::data_local_dir().unwrap().join("tasky-rs");
     path.push("todos.json");
 
-    let mut tasks: Vec<Task> = if path.exists() {
+    let tasks: Vec<Task> = if path.exists() {
         let mut file = File::open(&path).expect("Unable to open file");
         let mut data = String::new();
         file.read_to_string(&mut data).expect("Unable to read file");
-        if data.is_empty() {
+        if data.trim().is_empty() {
             Vec::new()
         } else {
             serde_json::from_str(&data).expect("Unable to parse JSON")
@@ -32,11 +32,18 @@ pub fn execute(id: &str) {
     };
 
     let id: u32 = id.parse().expect("Invalid ID format");
-    if let Some(task) = tasks.iter_mut().find(|t| t.id == id) {
-        // Mark the task as "Deleted"
-        task.status = "Deleted".to_string();
-        let serialized_tasks =
-            serde_json::to_string_pretty(&tasks).expect("Unable to serialize tasks");
+    let tasks: Vec<Task> = tasks
+        .into_iter()
+        .map(|mut task| {
+            if task.id == id {
+                task.status = "Deleted".to_string();
+            }
+            task
+        })
+        .collect();
+
+    if tasks.iter().any(|t| t.id == id) {
+        let serialized_tasks = serde_json::to_string_pretty(&tasks).expect("Unable to serialize tasks");
         let mut file = OpenOptions::new()
             .write(true)
             .create(true)
