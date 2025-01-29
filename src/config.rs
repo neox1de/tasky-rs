@@ -94,15 +94,32 @@ pub fn build_app() -> Command {
         .subcommand(
             Command::new("category")
                 .about("Manage task categories")
-                .arg(
-                    Arg::new("NAME")
-                        .required(true)
-                        .help("Category name"),
+                .subcommand(
+                    Command::new("new")
+                        .about("Create a new category")
+                        .arg(
+                            Arg::new("NAME")
+                                .required(true)
+                                .help("Category name"),
+                        )
+                        .arg(
+                            Arg::new("COLOR")
+                                .required(true)
+                                .help("Color in hex format (e.g., #ff0000)"),
+                        ),
                 )
-                .arg(
-                    Arg::new("COLOR")
-                        .required(true)
-                        .help("Color in hex format (e.g., #ff0000)"),
+                .subcommand(
+                    Command::new("show")
+                        .about("Show all categories"),
+                )
+                .subcommand(
+                    Command::new("remove")
+                        .about("Remove a category")
+                        .arg(
+                            Arg::new("NAME")
+                                .required(true)
+                                .help("Category name to remove"),
+                        ),
                 ),
         )
 }

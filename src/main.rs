@@ -53,11 +53,23 @@ fn main() {
             let status = sub_m.get_one::<String>("STATUS").unwrap();
             commands::set::execute(id, status);
         }
-        Some(("category", sub_m)) => {
-            let name = sub_m.get_one::<String>("NAME").unwrap();
-            let color = sub_m.get_one::<String>("COLOR").unwrap();
-            commands::category::execute(name, color);
-        }
+        Some(("category", sub_m)) => match sub_m.subcommand() {
+            Some(("new", new_matches)) => {
+                let name = new_matches.get_one::<String>("NAME").unwrap();
+                let color = new_matches.get_one::<String>("COLOR").unwrap();
+                commands::category::create(name, color);
+            }
+            Some(("show", _)) => {
+                commands::category::show();
+            }
+            Some(("remove", remove_matches)) => {
+                let name = remove_matches.get_one::<String>("NAME").unwrap();
+                commands::category::remove(name);
+            }
+            _ => {
+                println!("Invalid category subcommand. Use --help for usage information.");
+            }
+        },
         None => {
             println!("Missing argument, use --help to get help.");
         }
